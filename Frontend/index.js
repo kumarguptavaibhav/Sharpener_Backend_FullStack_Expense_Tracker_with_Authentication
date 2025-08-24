@@ -1,6 +1,6 @@
 let isEdit = false;
 let editId = null;
-const isLoggedIn = localStorage.getItem("user");
+const isLoggedIn = localStorage.getItem("expense_token");
 if (!isLoggedIn) {
   window.location.href = "signup.html";
 }
@@ -22,7 +22,12 @@ async function addExpense(event) {
   if (isEdit) {
     const result = await axios.put(
       `http://localhost:3000/expense/${editId}`,
-      expense_obj
+      expense_obj,
+      {
+        headers: {
+          authorization: `Bearer ${isLoggedIn}`,
+        },
+      }
     );
     const data = result.data;
     if (data.error) {
@@ -34,7 +39,12 @@ async function addExpense(event) {
   } else {
     const result = await axios.post(
       "http://localhost:3000/expense",
-      expense_obj
+      expense_obj,
+      {
+        headers: {
+          authorization: `Bearer ${isLoggedIn}`,
+        },
+      }
     );
     const data = result.data;
     if (data.error) {
@@ -47,9 +57,13 @@ async function addExpense(event) {
 }
 
 async function display() {
-  const ul = document.querySelector("ul");
+  const ul = document.querySelector("ol");
   ul.innerHTML = "";
-  const result = await axios.get("http://localhost:3000/expense");
+  const result = await axios.get("http://localhost:3000/expense", {
+    headers: {
+      authorization: `Bearer ${isLoggedIn}`,
+    },
+  });
   const data = result.data;
   if (data.error) {
     alert("Fetching Error");
@@ -62,30 +76,63 @@ async function display() {
   for (let i = 0; i < expenseList.length; i++) {
     const currentExpense = expenseList[i];
     const li = document.createElement("li");
-    li.textContent = `Amount: - ${currentExpense.amount}, Description: - ${currentExpense.description}, Category: - ${currentExpense.category}`;
+    li.style.listStyle = "none";
+    li.style.marginBottom = "10px";
 
-    const delete_btn = document.createElement("button");
-    delete_btn.textContent = "Delete Expense";
-    delete_btn.addEventListener("click", function (event) {
+    const div = document.createElement("div");
+    div.style.border = "3px solid green";
+    div.style.borderRadius = "30px";
+    div.style.padding = "10px";
+    div.style.display = "flex";
+    div.style.flexDirection = "row";
+    div.style.alignItems = "center";
+    div.style.gap = "50px";
+    div.style.backgroundColor = "lightgreen";
+    div.style.width = "1200px";
+
+    const p1 = document.createElement("p");
+    p1.innerHTML = `<b>Expense Amount: </b>${currentExpense.amount}`;
+
+    const p2 = document.createElement("p");
+    p2.innerHTML = `<b>Description: </b>${currentExpense.description}`;
+
+    const p3 = document.createElement("p");
+    p3.innerHTML = `<b>Category: </b>${currentExpense.category}`;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "btn btn-warning";
+    deleteBtn.textContent = "Delete Expense";
+
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "btn btn-warning";
+    editBtn.textContent = "Edit Expense";
+
+    div.appendChild(p1);
+    div.appendChild(p2);
+    div.appendChild(p3);
+    div.appendChild(deleteBtn);
+    div.appendChild(editBtn);
+    li.appendChild(div);
+    ul.appendChild(li);
+    deleteBtn.addEventListener("click", function (event) {
       event.preventDefault();
       delete_expense(currentExpense.id, li);
     });
-
-    const edit_btn = document.createElement("button");
-    edit_btn.textContent = "Edit Expense";
-    edit_btn.addEventListener("click", function (event) {
+    editBtn.addEventListener("click", function (event) {
       event.preventDefault();
       edit_expense(currentExpense);
     });
-
-    li.appendChild(delete_btn);
-    li.appendChild(edit_btn);
-    ul.appendChild(li);
   }
 }
 
 async function delete_expense(id, li) {
-  const result = await axios.delete(`http://localhost:3000/expense/${id}`);
+  const result = await axios.delete(`http://localhost:3000/expense/${id}`, {
+    headers: {
+      authorization: `Bearer ${isLoggedIn}`,
+    },
+  });
   const data = result.data;
   if (data.error) {
     alert("Deletion Error");

@@ -1,5 +1,7 @@
 const Users = require("../models/users.models");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const secret_key = "Vaibhav";
 
 const createUser = async (req, res) => {
   try {
@@ -63,7 +65,8 @@ const signInUser = async (req, res) => {
       err.statusCode = 401;
       throw err;
     }
-    res.status(200).json({ error: false, data: "User Login Successfully" });
+    const token = jwt.sign(check_user.toJSON(), secret_key);
+    res.status(200).json({ error: false, data: token });
   } catch (error) {
     res
       .status(error.statusCode || 500)

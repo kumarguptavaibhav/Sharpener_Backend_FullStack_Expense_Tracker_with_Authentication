@@ -21,42 +21,86 @@
     ></script>
     <script src="index.js" defer></script>
   </head>
-  <body>
+  <body style="background-color: lightblue">
     <div class="container">
-      <h1>Expense Tracker</h1>
-      <div class="container-sm">
+      <h1 class="text-center" style="margin-top: 30px; margin-bottom: 30px">
+        Expense Tracker
+      </h1>
+      <div
+        class="container"
+        style="
+          border: 3px solid blue;
+          width: 450px;
+          padding: 30px;
+          border-radius: 50px;
+          background-color: lightgoldenrodyellow;
+        "
+      >
         <form onsubmit="addExpense(event)">
           <label for="amount" class="form-label">Choose Expense Amount</label>
           <input
             id="amount"
             name="amount"
             type="number"
-            class="form-control"
+            class="form-control mb-3"
             placeholder="Enter Expense Amount"
+            required
           />
           <label for="description" class="form-label">Choose Description</label>
           <input
             id="description"
             name="description"
             type="text"
-            class="form-control"
+            class="form-control mb-3"
             placeholder="Enter Description"
+            required
           />
           <label for="category" class="form-label">Category</label>
           <select
-            class="form-select"
+            class="form-select mb-3"
             aria-label="Default select example"
             id="category"
             name="category"
+            required
           >
             <option value="fuel">Fuel</option>
             <option value="Fruit">Fruit</option>
             <option value="vegetable">Vegetable</option>
           </select>
-          <button type="submit">Add Expenses</button>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary mb-3">
+              Add Expenses
+            </button>
+          </div>
         </form>
       </div>
-      <ul></ul>
+      <h3 class="text-center" style="margin-top: 30px; margin-bottom: 30px">
+        Expense Details
+      </h3>
+      <ol>
+        <!-- <li style="list-style: none">
+          <div
+            style="
+              border: 3px solid green;
+              border-radius: 30px;
+              padding: 10px;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              gap: 50px;
+              background-color: lightgreen;
+            "
+          >
+            <p><b>Expense Amount: </b>100</p>
+            <p><b>Description: </b>Buy Petrol</p>
+            <p><b>Category: </b>Fuel</p>
+            <button type="button" class="btn btn-warning">
+              Delete Expense
+            </button>
+            <button type="button" class="btn btn-warning">Edit Expense</button>
+          </div>
+        </li> -->
+      </ol>
     </div>
   </body>
 </html>

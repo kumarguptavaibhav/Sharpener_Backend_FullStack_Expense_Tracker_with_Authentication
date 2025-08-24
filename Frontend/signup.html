@@ -27,10 +27,11 @@
           flex-direction: column;
           align-items: center;
           padding: 20px;
-          border: 3px solid blue;
+          border: 3px solid goldenrod;
           margin: auto;
           border-radius: 50px;
-          margin-top: 100px
+          margin-top: 100px;
+          background-color: lightgoldenrodyellow
         ">
             <h1 class="text-center">SignUp</h1>
             <form onsubmit="handleSignUp(event)">
@@ -40,7 +41,9 @@
                 <input type="email" id="email" name="email" class="form-control" /></br>
                 <label for="password" class="form-label">Password</label>
                 <input type="password" id="password" name="password" class="form-control" /></br>
-                <button type="submit" class="btn btn-primary mb-3">SignUp</button>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary mb-3">SignUp</button>
+                </div>
             </form>
             <a href="signin.html" style="color: blueviolet;">Go to Signin Page</a>
         </div>

@@ -2,6 +2,7 @@ const Expenses = require("../models/expenses.models");
 
 const create = async (req, res) => {
   try {
+    const { id } = req.user;
     const { amount, description, category } = req.body;
     if (!amount || !description || !category) {
       let err = new Error("Invalid Payload");
@@ -12,6 +13,7 @@ const create = async (req, res) => {
       amount: amount,
       description: description,
       category: category,
+      UserId: id,
     });
     res.status(200).json({ error: false, data: result });
   } catch (error) {
@@ -23,7 +25,12 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    const result = await Expenses.findAll();
+    const { id } = req.user;
+    const result = await Expenses.findAll({
+      where: {
+        UserId: id,
+      },
+    });
     res.status(200).json({ error: false, data: result });
   } catch (error) {
     res
@@ -35,6 +42,7 @@ const getAll = async (req, res) => {
 const update = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    const { id: userId } = req.user;
     const { amount, description, category } = req.body;
     if (!amount && !description && !category) {
       let err = new Error("Invalid Payload");
@@ -44,6 +52,7 @@ const update = async (req, res) => {
     const result = await Expenses.findOne({
       where: {
         id: id,
+        UserId: userId,
       },
     });
     if (!result) {
@@ -66,9 +75,11 @@ const update = async (req, res) => {
 const deleteExpense = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
+    const { id: userId } = req.user;
     const result = await Expenses.findOne({
       where: {
         id: id,
+        UserId: userId,
       },
     });
     if (!result) {

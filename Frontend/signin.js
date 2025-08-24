@@ -11,6 +11,7 @@ async function handleSignIn(event) {
       "http://localhost:3000/users/signin",
       req_obj
     );
+    localStorage.setItem("expense_token", login_response.data.data);
     window.location.href = "index.html";
   } catch (error) {
     const div = document.querySelector("#container");

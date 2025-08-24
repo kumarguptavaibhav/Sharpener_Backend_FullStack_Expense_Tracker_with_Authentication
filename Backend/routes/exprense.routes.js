@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/expense.controllers");
+const auth_middleware = require("../middleware/auth.middleware");
 
-router.post("/", controller.create);
-router.get("/", controller.getAll);
-router.put("/:id", controller.update);
-router.delete("/:id", controller.deleteExpense);
+router.post("/", auth_middleware, controller.create);
+router.get("/", auth_middleware, controller.getAll);
+router.put("/:id", auth_middleware, controller.update);
+router.delete("/:id", auth_middleware, controller.deleteExpense);
 
 module.exports = router;
