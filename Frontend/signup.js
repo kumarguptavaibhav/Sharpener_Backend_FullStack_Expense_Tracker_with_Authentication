@@ -1,26 +1,29 @@
 async function handleSignUp(event) {
   event.preventDefault();
-  const name = event.target.name.value;
-  const email = event.target.email.value;
-  const password = event.target.password.value;
-  const req_obj = {
-    name: name,
-    email: email,
-    password: password,
-  };
-  const create_response = await axios.post(
-    "http://localhost:3000/users",
-    req_obj
-  );
-  const create_data = create_response.data;
-  if (create_data.error) {
-    // console.log("Error: ", create_data.data);
+
+  try {
+    const name = event.target.name.value;
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+
+    const req_obj = { name, email, password };
+
+    const create_response = await axios.post(
+      "http://localhost:3000/users",
+      req_obj
+    );
+    window.location.href = "signin.html";
+  } catch (error) {
     const div = document.querySelector("#container");
     const para = document.createElement("p");
     para.style.color = "red";
-    para.textContent = `Error: ${create_data.data}`;
-    div.appendChild = para;
-    return;
+    if (error.response) {
+      para.textContent = `Error: ${
+        error.response.data.data || "Something went wrong"
+      }`;
+    } else {
+      para.textContent = "Error: Unable to connect to server. Try again later.";
+    }
+    div.appendChild(para);
   }
-  window.location.href = "signin.html";
 }

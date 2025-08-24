@@ -31,4 +31,37 @@ const createUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser };
+const signInUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log({ email, password });
+    if (!email || !password) {
+      let err = new Error("Invalid Payload");
+      err.statusCode = 400;
+      throw err;
+    }
+    const check_user = await Users.findOne({
+      where: {
+        email: email,
+      },
+    });
+    if (!check_user) {
+      let err = new Error("User not found");
+      err.statusCode = 404;
+      throw err;
+    }
+    if (password === check_user.password) {
+      res.status(200).json({ error: false, data: "User Login Successfully" });
+    } else {
+      let err = new Error("User not authorized");
+      err.statusCode = 401;
+      throw err;
+    }
+  } catch (error) {
+    res
+      .status(error.statusCode || 500)
+      .json({ error: true, data: error.message });
+  }
+};
+
+module.exports = { createUser, signInUser };
