@@ -57,21 +57,32 @@ function updateUIForPremium() {
 
 function addPremiumFeatures() {
   const container = document.querySelector(".container");
+
   const premiumDiv = document.createElement("div");
-  premiumDiv.className = "text-center mt-3";
-  premiumDiv.innerHTML = `
-    <div class="premium-features">
-      <h4 class="text-success">Premium Features</h4>
-      <button class="btn btn-outline-primary me-2">
-        Download Expenses
-      </button>
-      <button class="btn btn-outline-info">
-        View Leaderboard
-      </button>
-    </div>
-  `;
+  premiumDiv.className = "premium-features text-center mt-3";
+
+  const heading = document.createElement("h4");
+  heading.className = "text-success";
+  heading.textContent = "Premium Features";
+  premiumDiv.appendChild(heading);
+
+  const downloadBtn = document.createElement("button");
+  downloadBtn.className = "btn btn-outline-primary me-2";
+  downloadBtn.textContent = "Download Expenses";
+  premiumDiv.appendChild(downloadBtn);
+
+  const leaderboardBtn = document.createElement("button");
+  leaderboardBtn.className = "btn btn-outline-info";
+  leaderboardBtn.textContent = "View Leaderboard";
+  premiumDiv.appendChild(leaderboardBtn);
+
   const expenseHeader = document.querySelector("h3");
   container.insertBefore(premiumDiv, expenseHeader);
+
+  leaderboardBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+    onLeaderButtonClick();
+  });
 }
 
 async function addExpense(event) {
@@ -119,6 +130,7 @@ async function addExpense(event) {
       }
     }
     display();
+    onLeaderButtonClick();
     event.target.reset();
   } catch (error) {
     if (error.response?.data?.error) {
@@ -162,7 +174,6 @@ async function display() {
       div.style.alignItems = "center";
       div.style.gap = "50px";
       div.style.backgroundColor = "lightgreen";
-      div.style.width = "1200px";
 
       const p1 = document.createElement("p");
       p1.innerHTML = `<b>Expense Amount: </b>${currentExpense.amount}`;
@@ -273,6 +284,89 @@ async function onPaymentButton(event) {
       alert(error.response.data.error);
     } else {
       alert("Payment initiation failed. Please try again.");
+    }
+  }
+}
+
+async function onLeaderButtonClick() {
+  try {
+    const result = await axios.get(
+      "http://localhost:3000/premium/leaderboard",
+      {
+        headers: {
+          authorization: `Bearer ${isLoggedIn}`,
+        },
+      }
+    );
+    const data = result.data;
+    console.log("before error", data);
+    if (data.error) {
+      alert("Leaderboard Fetching Error");
+      return;
+    }
+    console.log("after error", data);
+
+    const container = document.getElementById("leader-div");
+    container.textContent = "";
+
+    const h3 = document.createElement("h3");
+    h3.className = "text-center mt-3";
+    h3.textContent = "Leader Board Details";
+
+    const leader_div = document.createElement("div");
+    leader_div.classList = "text-center mt-3";
+
+    const table = document.createElement("table");
+    table.style.borderRadius = "10px";
+    table.style.overflow = "hidder";
+    table.style.border = "2px solid red";
+    table.style.borderStyle = "seperate";
+    table.style.borderSpacing = "0";
+    table.className = "table";
+
+    //thead
+    const thead = document.createElement("thead");
+    const theadr = document.createElement("tr");
+    theadr.className = "table-danger";
+
+    const th_name = document.createElement("th");
+    th_name.textContent = "Name";
+
+    const th_total_amount = document.createElement("th");
+    th_total_amount.textContent = "Expense Total Amount";
+
+    theadr.appendChild(th_name);
+    theadr.appendChild(th_total_amount);
+    thead.appendChild(theadr);
+
+    //tbody
+    const tbody = document.createElement("tbody");
+    for (let i = 0; i < data.data.length; i++) {
+      const curr_data = data.data[i];
+      const tbodyr = document.createElement("tr");
+      tbodyr.className = "table-warning";
+
+      const td_name = document.createElement("td");
+      td_name.textContent = curr_data.name;
+
+      const td_total_amount = document.createElement("td");
+      td_total_amount.textContent = curr_data.total_amount;
+
+      tbodyr.appendChild(td_name);
+      tbodyr.appendChild(td_total_amount);
+      tbody.appendChild(tbodyr);
+    }
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    leader_div.appendChild(table);
+
+    container.appendChild(h3);
+    container.appendChild(leader_div);
+  } catch (error) {
+    if (error.response?.data?.error) {
+      alert(error.response.data.error);
+    } else {
+      alert("Fetching expense failed. Please try again.");
     }
   }
 }
