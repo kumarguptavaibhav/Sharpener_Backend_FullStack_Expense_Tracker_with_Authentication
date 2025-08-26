@@ -21,6 +21,14 @@ const Users = sequelize.define("Users", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  is_premium: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  premium_expiry: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 });
 
 module.exports = Users;

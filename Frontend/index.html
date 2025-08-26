@@ -19,6 +19,7 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.1/axios.min.js"
       defer
     ></script>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js" defer></script>
     <script src="index.js" defer></script>
   </head>
   <body style="background-color: lightblue">
@@ -29,7 +30,7 @@
       <div
         class="container"
         style="
-          border: 3px solid blue;
+          border: 3px solid goldenrod;
           width: 450px;
           padding: 30px;
           border-radius: 50px;
@@ -73,6 +74,15 @@
             </button>
           </div>
         </form>
+      </div>
+      <div class="text-center">
+        <button
+          class="btn btn-danger mt-3"
+          id="pay-btn"
+          onclick="onPaymentButton(event)"
+        >
+          Get Premium
+        </button>
       </div>
       <h3 class="text-center" style="margin-top: 30px; margin-bottom: 30px">
         Expense Details
