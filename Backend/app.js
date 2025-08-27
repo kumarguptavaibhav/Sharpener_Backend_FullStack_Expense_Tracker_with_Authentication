@@ -6,6 +6,7 @@ const usersRoutes = require("./routes/users.routes");
 const paymentRoutes = require("./routes/payments.routes");
 const tokenRoutes = require("./routes/token.routes");
 const premiumRoutes = require("./routes/premium.routes");
+const passwordRoutes = require("./routes/password.routes");
 const db = require("./utils/dbconnection");
 const app = express();
 const port = 3000;
@@ -20,6 +21,7 @@ app.use("/users", usersRoutes);
 app.use("/payments", paymentRoutes);
 app.use("/token", tokenRoutes);
 app.use("/premium", premiumRoutes);
+app.use("/password", passwordRoutes);
 
 db.sync({ alter: true })
   .then(() => {
