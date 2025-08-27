@@ -65,7 +65,14 @@ const signInUser = async (req, res) => {
       err.statusCode = 401;
       throw err;
     }
-    const token = jwt.sign(check_user.toJSON(), secret_key);
+    const user_obj = {
+      id: check_user.id,
+      name: check_user.name,
+      email: check_user.email,
+      is_premium: check_user.is_premium,
+      premium_expiry: check_user.premium_expiry,
+    };
+    const token = jwt.sign(user_obj, secret_key);
     res.status(200).json({ error: false, data: token });
   } catch (error) {
     res

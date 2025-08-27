@@ -4,6 +4,7 @@ const cashfree = Cashfree({
 let isEdit = false;
 let editId = null;
 let isPremiumUser = false;
+let isLeaderButtonClick = false;
 const isLoggedIn = localStorage.getItem("expense_token");
 if (!isLoggedIn) {
   window.location.href = "signup.html";
@@ -81,6 +82,7 @@ function addPremiumFeatures() {
 
   leaderboardBtn.addEventListener("click", function (event) {
     event.preventDefault();
+    isLeaderButtonClick = true;
     onLeaderButtonClick();
   });
 }
@@ -130,7 +132,9 @@ async function addExpense(event) {
       }
     }
     display();
-    onLeaderButtonClick();
+    if (isLeaderButtonClick && isPremiumUser) {
+      onLeaderButtonClick();
+    }
     event.target.reset();
   } catch (error) {
     if (error.response?.data?.error) {
@@ -232,6 +236,9 @@ async function delete_expense(id, li) {
       return;
     } else {
       display();
+      if (isLeaderButtonClick && isPremiumUser) {
+        onLeaderButtonClick();
+      }
     }
   } catch (error) {
     if (error.response?.data?.error) {

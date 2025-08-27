@@ -11,8 +11,14 @@ const updateToken = async (req, res) => {
       err.statusCode = 404;
       throw err;
     }
-
-    const new_token = jwt.sign(existing_user.toJSON(), secretKey);
+    const user_obj = {
+      id: existing_user.id,
+      name: existing_user.name,
+      email: existing_user.email,
+      is_premium: existing_user.is_premium,
+      premium_expiry: existing_user.premium_expiry,
+    };
+    const new_token = jwt.sign(user_obj, secretKey);
 
     res.status(200).json({ error: false, data: new_token });
   } catch (error) {

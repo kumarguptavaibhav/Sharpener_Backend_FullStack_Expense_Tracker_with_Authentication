@@ -98,7 +98,7 @@ const checkPremiumStatus = async (req, res) => {
       user.is_premium && user.premium_expiry && premium_expiry_date > curr_date;
     res
       .status(200)
-      .json({ error: false, data: { isPremium: isPremiumActive, user } });
+      .json({ error: false, data: { isPremium: isPremiumActive } });
   } catch (error) {
     res.status(500).json({ error: true, data: error.message });
   }

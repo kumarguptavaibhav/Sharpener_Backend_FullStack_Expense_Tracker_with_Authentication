@@ -29,6 +29,10 @@ const Users = sequelize.define("Users", {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  total_amount: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
 });
 
 module.exports = Users;
