@@ -12,14 +12,12 @@ if (!isLoggedIn) {
 
 window.addEventListener("DOMContentLoaded", function (event) {
   event.preventDefault();
-  console.log("Trigger index.js");
   checkPremiumStatus();
   display();
 });
 
 async function checkPremiumStatus() {
   try {
-    console.log("Token sent", isLoggedIn);
     const result = await axios.get(
       "http://localhost:3000/payments/premium-status",
       {
@@ -306,12 +304,10 @@ async function onLeaderButtonClick() {
       }
     );
     const data = result.data;
-    console.log("before error", data);
     if (data.error) {
       alert("Leaderboard Fetching Error");
       return;
     }
-    console.log("after error", data);
 
     const container = document.getElementById("leader-div");
     container.textContent = "";

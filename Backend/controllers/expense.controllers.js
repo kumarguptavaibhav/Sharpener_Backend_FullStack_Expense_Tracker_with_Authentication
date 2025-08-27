@@ -12,20 +12,23 @@ const create = async (req, res) => {
       throw err;
     }
     await sequelize.transaction(async (t) => {
-      const user = await Users.findByPk(id);
+      const user = await Users.findByPk(id, { transaction: t });
       if (!user) {
         let err = new Error("User not found");
         err.statusCode = 404;
         throw err;
       }
-      const expense = await Expenses.create({
-        amount: amount,
-        description: description,
-        category: category,
-        UserId: id,
-      });
+      const expense = await Expenses.create(
+        {
+          amount: amount,
+          description: description,
+          category: category,
+          UserId: id,
+        },
+        { transaction: t }
+      );
       user.total_amount = Number(user.total_amount) + Number(amount);
-      await user.save();
+      await user.save({ transaction: t });
 
       res.status(200).json({ error: false, data: expense });
     });
@@ -63,7 +66,7 @@ const update = async (req, res) => {
       throw err;
     }
     await sequelize.transaction(async (t) => {
-      const user = await Users.findByPk(userId);
+      const user = await Users.findByPk(userId, { transaction: t });
       if (!user) {
         let err = new Error("User not found");
         err.statusCode = 404;
@@ -74,6 +77,7 @@ const update = async (req, res) => {
           id: id,
           UserId: userId,
         },
+        transaction: t,
       });
       if (!expense) {
         let err = new Error("Resource Not Found");
@@ -87,8 +91,8 @@ const update = async (req, res) => {
       }
       if (description) expense.description = description;
       if (category) expense.category = category;
-      await expense.save();
-      await user.save();
+      await expense.save({ transaction: t });
+      await user.save({ transaction: t });
       res.status(200).json({ error: false, data: "Updated Successfully" });
     });
   } catch (error) {
@@ -103,7 +107,7 @@ const deleteExpense = async (req, res) => {
     const id = parseInt(req.params.id);
     const { id: userId } = req.user;
     await sequelize.transaction(async (t) => {
-      const user = await Users.findByPk(userId);
+      const user = await Users.findByPk(userId, { transaction: t });
       if (!user) {
         let err = new Error("User not found");
         err.statusCode = 404;
@@ -114,6 +118,7 @@ const deleteExpense = async (req, res) => {
           id: id,
           UserId: userId,
         },
+        transaction: t,
       });
       if (!expense) {
         let err = new Error("Resource Not Found");
@@ -121,11 +126,12 @@ const deleteExpense = async (req, res) => {
         throw err;
       }
       user.total_amount = Number(user.total_amount) - Number(expense.amount);
-      await user.save();
+      await user.save({ transaction: t });
       const delete_result = await Expenses.destroy({
         where: {
           id: id,
         },
+        transaction: t,
       });
 
       res.status(200).json({ error: false, data: "Deleted Successfully" });

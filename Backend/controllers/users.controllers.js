@@ -1,6 +1,7 @@
 const Users = require("../models/users.models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sequelize = require("../utils/dbconnection");
 const secret_key = "Vaibhav";
 
 const createUser = async (req, res) => {
@@ -11,27 +12,35 @@ const createUser = async (req, res) => {
       err.statusCode = 400;
       throw err;
     }
-    const find_user = await Users.findOne({
-      where: {
-        email: email,
-      },
-    });
-    if (find_user) {
-      let err = new Error("User Already Registered");
-      err.statusCode = 409;
-      throw err;
-    }
-    const saltRound = 10;
-    bcrypt.hash(password, saltRound, async (err, hash) => {
-      if (err) {
+    await sequelize.transaction(async (t) => {
+      const find_user = await Users.findOne({
+        where: {
+          email: email,
+        },
+        transaction: t,
+      });
+      if (find_user) {
+        let err = new Error("User Already Registered");
+        err.statusCode = 409;
         throw err;
       }
-      const create_result = await Users.create({
-        name: name,
-        email: email,
-        password: hash,
+      const saltRound = 10;
+      bcrypt.hash(password, saltRound, async (err, hash) => {
+        if (err) {
+          throw err;
+        }
+        const create_result = await Users.create(
+          {
+            name: name,
+            email: email,
+            password: hash,
+          },
+          { transaction: t }
+        );
+        res
+          .status(201)
+          .json({ error: false, data: "User Created Successfully" });
       });
-      res.status(201).json({ error: false, data: "User Created Successfully" });
     });
   } catch (error) {
     res
@@ -43,7 +52,6 @@ const createUser = async (req, res) => {
 const signInUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log({ email, password });
     if (!email || !password) {
       let err = new Error("Invalid Payload");
       err.statusCode = 400;

@@ -1,6 +1,5 @@
 window.addEventListener("DOMContentLoaded", async (event) => {
   event.preventDefault();
-  console.log("Success Trigger");
   try {
     const existing_token = localStorage.getItem("expense_token");
     const response_result = await axios.post(
@@ -19,7 +18,6 @@ window.addEventListener("DOMContentLoaded", async (event) => {
     }
     localStorage.setItem("expense_token", result_data.data);
   } catch (error) {
-    console.log("Payment Error: ", error);
     if (error.response?.data?.error) {
       alert(error.response.data.error);
     } else {

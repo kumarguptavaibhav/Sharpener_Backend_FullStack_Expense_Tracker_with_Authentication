@@ -47,7 +47,6 @@ const processPayment = async (req, res) => {
       .status(201)
       .json({ error: false, data: paymentSessionId, orderId: order_id });
   } catch (error) {
-    console.log("error x", error);
     res
       .status(error.statusCode || 500)
       .json({ error: true, data: error.message });
