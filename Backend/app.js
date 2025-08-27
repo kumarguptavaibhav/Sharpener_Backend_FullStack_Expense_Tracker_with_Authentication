@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const env = require("dotenv");
+env.config();
 const exprenseRoutes = require("./routes/exprense.routes");
 const usersRoutes = require("./routes/users.routes");
 const paymentRoutes = require("./routes/payments.routes");
@@ -12,6 +14,7 @@ const app = express();
 const port = 3000;
 require("./models/association");
 
+env.config();
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.json());
