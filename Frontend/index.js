@@ -102,10 +102,12 @@ async function addExpense(event) {
     const amount = event.target.amount.value;
     const description = event.target.description.value;
     const category = event.target.category.value;
+    const note = event.target.note.value;
     const expense_obj = {
       amount: amount,
       description: description,
       category: category,
+      note: note,
     };
     if (isEdit) {
       const result = await axios.put(
@@ -228,6 +230,9 @@ async function display(page = 1) {
       const p3 = document.createElement("p");
       p3.innerHTML = `<b>Category: </b>${currentExpense.category}`;
 
+      const note = document.createElement("p");
+      note.innerHTML = `<b>Note: </b>${currentExpense.note}`;
+
       const p4 = document.createElement("p");
       p4.innerHTML = `<b>Created At: </b>${create_date.toLocaleString()}`;
 
@@ -247,6 +252,7 @@ async function display(page = 1) {
       div.appendChild(p1);
       div.appendChild(p2);
       div.appendChild(p3);
+      div.appendChild(note);
       div.appendChild(p4);
       div.appendChild(p5);
       div.appendChild(deleteBtn);
@@ -329,6 +335,7 @@ function edit_expense(data) {
     document.getElementById("amount").value = data.amount;
     document.getElementById("description").value = data.description;
     document.getElementById("category").value = data.category;
+    document.getElementById("note").value = data.note;
     editId = data.id;
     isEdit = true;
   }

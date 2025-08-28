@@ -6,7 +6,7 @@ const { Parser } = require("json2csv");
 const create = async (req, res) => {
   try {
     const { id } = req.user;
-    const { amount, description, category } = req.body;
+    const { amount, description, category, note } = req.body;
     if (!amount || !description || !category) {
       let err = new Error("Invalid Payload");
       err.statusCode = 400;
@@ -25,6 +25,7 @@ const create = async (req, res) => {
           description: description,
           category: category,
           UserId: id,
+          note: note,
         },
         { transaction: t }
       );
@@ -81,7 +82,7 @@ const update = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     const { id: userId } = req.user;
-    const { amount, description, category } = req.body;
+    const { amount, description, category, note } = req.body;
     if (!amount && !description && !category) {
       let err = new Error("Invalid Payload");
       err.statusCode = 400;
@@ -113,6 +114,7 @@ const update = async (req, res) => {
       }
       if (description) expense.description = description;
       if (category) expense.category = category;
+      if (note) expense.note = note;
       await expense.save({ transaction: t });
       await user.save({ transaction: t });
       res.status(200).json({ error: false, data: "Updated Successfully" });
@@ -185,6 +187,7 @@ const downloadExpense = async (req, res) => {
       "category",
       "createdAt",
       "updatedAt",
+      "note",
     ];
     const json2csvparser = new Parser({ fields });
     const csv = json2csvparser.parse(expenses);
