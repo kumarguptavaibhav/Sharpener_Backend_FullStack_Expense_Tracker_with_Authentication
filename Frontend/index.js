@@ -143,26 +143,31 @@ async function addExpense(event) {
   }
 }
 
-async function display() {
+async function display(page = 1) {
   try {
     const ul = document.querySelector("ol");
     ul.innerHTML = "";
-    const result = await axios.get("http://localhost:3000/expense", {
+    const result = await axios.get(`http://localhost:3000/expense/${page}`, {
       headers: {
         authorization: `Bearer ${isLoggedIn}`,
       },
     });
     const data = result.data;
-    if (data.error) {
-      alert("Fetching Error");
+    const expenseData = data.data;
+    const {
+      expenses,
+      current_page,
+      has_next_page,
+      has_previous_page,
+      last_page,
+      next_page,
+      previous_page,
+    } = expenseData;
+    if (!expenses || expenses.length === 0) {
       return;
     }
-    const expenseList = data.data;
-    if (!expenseList || expenseList.length === 0) {
-      return;
-    }
-    for (let i = 0; i < expenseList.length; i++) {
-      const currentExpense = expenseList[i];
+    for (let i = 0; i < expenses.length; i++) {
+      const currentExpense = expenses[i];
       const create_date = new Date(currentExpense.createdAt);
       const update_date = new Date(currentExpense.updatedAt);
       const li = document.createElement("li");
@@ -222,9 +227,36 @@ async function display() {
         edit_expense(currentExpense);
       });
     }
+    if (document.getElementById("pagination-div")) {
+      document.getElementById("pagination-div").remove();
+    }
+    const pagination_div = document.createElement("div");
+    pagination_div.className = "text-center";
+    pagination_div.style.display = "flex";
+    pagination_div.style.justifyContent = "center";
+    pagination_div.style.gap = "10px";
+    pagination_div.id = "pagination-div";
+
+    const left_button = document.createElement("button");
+    left_button.textContent = "<";
+    left_button.disabled = !has_previous_page;
+    left_button.addEventListener("click", () => display(previous_page));
+
+    const p = document.createElement("p");
+    p.innerHTML = `<b>${current_page}</b>`;
+
+    const right_button = document.createElement("button");
+    right_button.textContent = ">";
+    right_button.disabled = !has_next_page;
+    right_button.addEventListener("click", () => display(next_page));
+
+    pagination_div.appendChild(left_button);
+    pagination_div.appendChild(p);
+    pagination_div.appendChild(right_button);
+    ul.insertAdjacentElement("afterend", pagination_div);
   } catch (error) {
     if (error.response?.data?.error) {
-      alert(error.response.data.error);
+      alert(error.response.data.data);
     } else {
       alert("Fetching expense failed. Please try again.");
     }

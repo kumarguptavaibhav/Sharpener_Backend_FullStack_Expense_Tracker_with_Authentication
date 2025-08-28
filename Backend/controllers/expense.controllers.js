@@ -1,6 +1,8 @@
 const Expenses = require("../models/expenses.models");
 const Users = require("../models/users.models");
 const sequelize = require("../utils/dbconnection");
+const page_size = 2;
+const page = 1;
 
 const create = async (req, res) => {
   try {
@@ -41,13 +43,33 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
+    const page = parseInt(req.params.page) || 1;
     const { id } = req.user;
-    const result = await Expenses.findAll({
+    const total_expense = await Expenses.count({
       where: {
         UserId: id,
       },
     });
-    res.status(200).json({ error: false, data: result });
+    const total_pages = Math.ceil(total_expense / page_size);
+    const result = await Expenses.findAll({
+      where: {
+        UserId: id,
+      },
+      offset: (page - 1) * page_size,
+      limit: page_size,
+    });
+    res.status(200).json({
+      error: false,
+      data: {
+        expenses: result,
+        current_page: page,
+        has_next_page: total_pages > page,
+        has_previous_page: page > 1,
+        last_page: total_pages,
+        next_page: page < total_pages ? page + 1 : null,
+        previous_page: page > 1 ? page - 1 : null,
+      },
+    });
   } catch (error) {
     res
       .status(error.statusCode || 500)

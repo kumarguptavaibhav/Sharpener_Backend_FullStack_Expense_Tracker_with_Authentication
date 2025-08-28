@@ -4,7 +4,7 @@ const controller = require("../controllers/expense.controllers");
 const auth_middleware = require("../middleware/auth.middleware");
 
 router.post("/", auth_middleware, controller.create);
-router.get("/", auth_middleware, controller.getAll);
+router.get("/:page", auth_middleware, controller.getAll);
 router.put("/:id", auth_middleware, controller.update);
 router.delete("/:id", auth_middleware, controller.deleteExpense);
 
