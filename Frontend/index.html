@@ -87,6 +87,23 @@
       <h3 class="text-center" style="margin-top: 30px; margin-bottom: 30px">
         Expense Details
       </h3>
+
+      <div class="d-flex justify-content-end align-items-center mb-3">
+        <label for="limit-select" class="form-label me-2 mb-0"
+          >Items per page:</label
+        >
+        <select
+          id="limit-select"
+          name="limit-select"
+          class="form-select w-auto"
+        >
+          <option value="2" selected>2</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+
       <ol>
         <!-- <li style="list-style: none">
           <div

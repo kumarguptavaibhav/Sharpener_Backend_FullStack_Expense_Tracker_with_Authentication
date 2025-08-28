@@ -14,6 +14,12 @@ window.addEventListener("DOMContentLoaded", function (event) {
   event.preventDefault();
   checkPremiumStatus();
   display();
+  const limitSelect = document.getElementById("limit-select");
+  if (limitSelect) {
+    limitSelect.addEventListener("change", () => {
+      display();
+    });
+  }
 });
 
 async function checkPremiumStatus() {
@@ -83,6 +89,11 @@ function addPremiumFeatures() {
     isLeaderButtonClick = true;
     onLeaderButtonClick();
   });
+
+  downloadBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+    onDownloadButtonClick();
+  });
 }
 
 async function addExpense(event) {
@@ -145,13 +156,17 @@ async function addExpense(event) {
 
 async function display(page = 1) {
   try {
+    const limit = document.getElementById("limit-select").value;
     const ul = document.querySelector("ol");
     ul.innerHTML = "";
-    const result = await axios.get(`http://localhost:3000/expense/${page}`, {
-      headers: {
-        authorization: `Bearer ${isLoggedIn}`,
-      },
-    });
+    const result = await axios.get(
+      `http://localhost:3000/expense/expense?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          authorization: `Bearer ${isLoggedIn}`,
+        },
+      }
+    );
     const data = result.data;
     const expenseData = data.data;
     const {
@@ -164,6 +179,26 @@ async function display(page = 1) {
       previous_page,
     } = expenseData;
     if (!expenses || expenses.length === 0) {
+      const li = document.createElement("li");
+      li.style.listStyle = "none";
+      li.style.marginBottom = "10px";
+
+      const div = document.createElement("div");
+      div.style.border = "3px solid green";
+      div.style.borderRadius = "10px";
+      div.style.padding = "10px";
+      div.style.display = "flex";
+      div.style.flexDirection = "row";
+      div.style.alignItems = "center";
+      div.style.justifyContent = "space-between";
+      div.style.backgroundColor = "lightgreen";
+
+      const p1 = document.createElement("p");
+      p1.innerHTML = `<b>No Expense has been found! </b>`;
+
+      div.appendChild(p1);
+      li.appendChild(div);
+      ul.appendChild(li);
       return;
     }
     for (let i = 0; i < expenses.length; i++) {
@@ -413,5 +448,25 @@ async function onLeaderButtonClick() {
     } else {
       alert("Fetching expense failed. Please try again.");
     }
+  }
+}
+
+async function onDownloadButtonClick() {
+  try {
+    const response = await axios.get("http://localhost:3000/expense/download", {
+      headers: {
+        authorization: `Bearer ${isLoggedIn}`,
+      },
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "expenses.csv");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    alert("Error: " + error.response.statusText);
   }
 }

@@ -1,8 +1,7 @@
 const Expenses = require("../models/expenses.models");
 const Users = require("../models/users.models");
 const sequelize = require("../utils/dbconnection");
-const page_size = 2;
-const page = 1;
+const { Parser } = require("json2csv");
 
 const create = async (req, res) => {
   try {
@@ -43,20 +42,21 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    const page = parseInt(req.params.page) || 1;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 2;
     const { id } = req.user;
     const total_expense = await Expenses.count({
       where: {
         UserId: id,
       },
     });
-    const total_pages = Math.ceil(total_expense / page_size);
+    const total_pages = Math.ceil(total_expense / limit);
     const result = await Expenses.findAll({
       where: {
         UserId: id,
       },
-      offset: (page - 1) * page_size,
-      limit: page_size,
+      offset: (page - 1) * limit,
+      limit: limit,
     });
     res.status(200).json({
       error: false,
@@ -165,4 +165,37 @@ const deleteExpense = async (req, res) => {
   }
 };
 
-module.exports = { create, getAll, deleteExpense, update };
+const downloadExpense = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const expenses = await Expenses.findAll({
+      where: {
+        UserId: id,
+      },
+    });
+    if (expenses.length === 0) {
+      let err = new Error("No expense has been found");
+      err.statusCode = 404;
+      throw err;
+    }
+    const fields = [
+      "id",
+      "amount",
+      "description",
+      "category",
+      "createdAt",
+      "updatedAt",
+    ];
+    const json2csvparser = new Parser({ fields });
+    const csv = json2csvparser.parse(expenses);
+
+    res.header("Content-Type", "text/csv");
+    return res.send(csv);
+  } catch (error) {
+    res
+      .status(error.statusCode || 500)
+      .json({ error: true, data: error.message });
+  }
+};
+
+module.exports = { create, getAll, deleteExpense, update, downloadExpense };
