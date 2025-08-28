@@ -163,18 +163,20 @@ async function display() {
     }
     for (let i = 0; i < expenseList.length; i++) {
       const currentExpense = expenseList[i];
+      const create_date = new Date(currentExpense.createdAt);
+      const update_date = new Date(currentExpense.updatedAt);
       const li = document.createElement("li");
       li.style.listStyle = "none";
       li.style.marginBottom = "10px";
 
       const div = document.createElement("div");
       div.style.border = "3px solid green";
-      div.style.borderRadius = "30px";
+      div.style.borderRadius = "10px";
       div.style.padding = "10px";
       div.style.display = "flex";
       div.style.flexDirection = "row";
       div.style.alignItems = "center";
-      div.style.gap = "50px";
+      div.style.justifyContent = "space-between";
       div.style.backgroundColor = "lightgreen";
 
       const p1 = document.createElement("p");
@@ -186,19 +188,27 @@ async function display() {
       const p3 = document.createElement("p");
       p3.innerHTML = `<b>Category: </b>${currentExpense.category}`;
 
+      const p4 = document.createElement("p");
+      p4.innerHTML = `<b>Created At: </b>${create_date.toLocaleString()}`;
+
+      const p5 = document.createElement("p");
+      p5.innerHTML = `<b>Updated At: </b>${update_date.toLocaleString()}`;
+
       const deleteBtn = document.createElement("button");
       deleteBtn.type = "button";
       deleteBtn.className = "btn btn-warning";
-      deleteBtn.textContent = "Delete Expense";
+      deleteBtn.textContent = "Delete";
 
       const editBtn = document.createElement("button");
       editBtn.type = "button";
       editBtn.className = "btn btn-warning";
-      editBtn.textContent = "Edit Expense";
+      editBtn.textContent = "Edit";
 
       div.appendChild(p1);
       div.appendChild(p2);
       div.appendChild(p3);
+      div.appendChild(p4);
+      div.appendChild(p5);
       div.appendChild(deleteBtn);
       div.appendChild(editBtn);
       li.appendChild(div);
