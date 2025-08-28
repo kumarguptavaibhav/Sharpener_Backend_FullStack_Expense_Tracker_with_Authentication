@@ -26,7 +26,7 @@ app.use("/token", tokenRoutes);
 app.use("/premium", premiumRoutes);
 app.use("/password", passwordRoutes);
 
-db.sync({ alter: true })
+db.sync({ force: true })
   .then(() => {
     app.listen(port, () => {
       console.log(`Server is running on ${port}`);

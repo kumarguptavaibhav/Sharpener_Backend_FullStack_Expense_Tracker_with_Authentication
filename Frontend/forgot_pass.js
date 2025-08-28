@@ -10,10 +10,9 @@ async function handleForgotPassword(event) {
       "http://localhost:3000/password/forgot-password",
       req_obj
     );
-    const response_data = response.data;
     form.reset();
     alert("Email sent successfully for forgot password");
   } catch (error) {
-    alert(error.response.data.data);
+    alert("Error: " + error.response.data.data);
   }
 }

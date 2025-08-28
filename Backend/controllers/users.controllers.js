@@ -25,22 +25,16 @@ const createUser = async (req, res) => {
         throw err;
       }
       const saltRound = 10;
-      bcrypt.hash(password, saltRound, async (err, hash) => {
-        if (err) {
-          throw err;
-        }
-        const create_result = await Users.create(
-          {
-            name: name,
-            email: email,
-            password: hash,
-          },
-          { transaction: t }
-        );
-        res
-          .status(201)
-          .json({ error: false, data: "User Created Successfully" });
-      });
+      const hash = await bcrypt.hash(password, saltRound);
+      const create_result = await Users.create(
+        {
+          name: name,
+          email: email,
+          password: hash,
+        },
+        { transaction: t }
+      );
+      res.status(201).json({ error: false, data: "User Created Successfully" });
     });
   } catch (error) {
     res

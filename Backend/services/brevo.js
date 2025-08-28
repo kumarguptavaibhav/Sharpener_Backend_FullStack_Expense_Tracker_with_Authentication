@@ -11,7 +11,7 @@ const sender = {
   name: "Vaibhav",
 };
 
-async function sendMail(name, email) {
+async function sendMail(name, email, request_url) {
   try {
     const receivers = [
       {
@@ -23,7 +23,13 @@ async function sendMail(name, email) {
       sender,
       to: receivers,
       subject: "Forgot Password",
-      textContent: "This email is used for resetting the password.",
+      htmlContent: `
+      <div style:"background-color: lightblue">
+        <p>Hi ${name},</p>
+        <p>Click below to reset your password:</p>
+        <a href="${request_url}">Reset Password</a>
+      </div>
+      `,
     });
     return response;
   } catch (error) {
