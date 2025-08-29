@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const env = require("dotenv");
+const helmet = require("helmet");
 env.config();
 const exprenseRoutes = require("./routes/exprense.routes");
 const usersRoutes = require("./routes/users.routes");
@@ -15,9 +15,9 @@ const port = 3000;
 require("./models/association");
 
 env.config();
-app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(express.json());
+app.use(helmet());
 
 app.use("/expense", exprenseRoutes);
 app.use("/users", usersRoutes);

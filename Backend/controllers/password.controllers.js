@@ -8,6 +8,7 @@ const sequelize = require("../utils/dbconnection");
 
 const forgotPassword = async (req, res) => {
   try {
+    const frontend_base_url = req.query.frontend_base_url;
     const { email } = req.body;
     if (!email) {
       let err = new Error("Invalid Payload");
@@ -32,7 +33,7 @@ const forgotPassword = async (req, res) => {
       UserId: user.id,
     });
 
-    const request_url = `http://localhost:3000/password/reset-password/${request_id}`;
+    const request_url = `http://localhost:3000/password/reset-password/${request_id}?frontend_base_url=${frontend_base_url}`;
     const response = await sendMail(user.name, user.email, request_url);
     if (!response) {
       let err = new Error("Email sending failed");
@@ -52,6 +53,7 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
+    const frontend_base_url = req.query.frontend_base_url;
     const requestId = req.params.requestId;
     const request_data = await ForgotPasswordRequests.findByPk(requestId);
     if (!request_data) {
@@ -64,8 +66,8 @@ const resetPassword = async (req, res) => {
       err.statusCode = 410;
       throw err;
     }
-    res.sendFile(
-      path.join(__dirname, "..", "views", "forgotPasswordForm.html")
+    return res.redirect(
+      `${frontend_base_url}/Frontend/forgotPasswordForm.html?requestId=${requestId}`
     );
   } catch (error) {
     res
