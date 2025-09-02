@@ -2,9 +2,9 @@ const Users = require("../models/users.models");
 const sendMail = require("../services/brevo");
 const { v4: uuidv4 } = require("uuid");
 const ForgotPasswordRequests = require("../models/forgotpasswordrequests.models");
-const path = require("path");
 const bcrypt = require("bcrypt");
 const sequelize = require("../utils/dbconnection");
+const saltRound = Number(process.env.SALT_ROUND);
 
 const forgotPassword = async (req, res) => {
   try {
@@ -105,7 +105,6 @@ const updatePassword = async (req, res) => {
         err.statusCode = 404;
         throw err;
       }
-      const saltRound = 10;
       const hash = await bcrypt.hash(new_password, saltRound);
       user.password = hash;
       request_response.is_active = false;

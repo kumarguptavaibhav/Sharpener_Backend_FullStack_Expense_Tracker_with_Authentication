@@ -1,4 +1,6 @@
 const Brevo = require("@getbrevo/brevo");
+const sender_email = process.env.SENDER_EMAIL;
+const sender_name = process.env.SENDER_NAME;
 
 const apiInstance = new Brevo.TransactionalEmailsApi();
 apiInstance.setApiKey(
@@ -7,8 +9,8 @@ apiInstance.setApiKey(
 );
 
 const sender = {
-  email: "vaibhav9161porwal@gmail.com",
-  name: "Vaibhav",
+  email: sender_email,
+  name: sender_name,
 };
 
 async function sendMail(name, email, request_url) {

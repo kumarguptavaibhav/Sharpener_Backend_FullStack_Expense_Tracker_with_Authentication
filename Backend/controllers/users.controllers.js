@@ -2,7 +2,8 @@ const Users = require("../models/users.models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sequelize = require("../utils/dbconnection");
-const secret_key = "Vaibhav";
+const secret_key = process.env.SECRET_KEY;
+const saltRound = Number(process.env.SALT_ROUND);
 
 const createUser = async (req, res) => {
   try {
@@ -24,7 +25,6 @@ const createUser = async (req, res) => {
         err.statusCode = 409;
         throw err;
       }
-      const saltRound = 10;
       const hash = await bcrypt.hash(password, saltRound);
       const create_result = await Users.create(
         {
